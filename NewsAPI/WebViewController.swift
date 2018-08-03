@@ -13,17 +13,19 @@ class WebViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
 
     @IBOutlet weak var webview: WKWebView!
     var content:Contents!
+    var num: Int!
     override func viewDidLoad() {
         super.viewDidLoad()
+        num = 0
         webview.uiDelegate = self
         webview.navigationDelegate = self
         let request = NSURLRequest(url: content.url)
+        HUD.show(.progress)
         webview.load(request as URLRequest)
         // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        HUD.show(.progress)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -35,8 +37,13 @@ class WebViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
         // Dispose of any resources that can be recreated.
     }
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        print("読み込み完了")
-        HUD.flash(.success, delay: 0)
+        if num == 0{
+            print("読み込み完了")
+            HUD.flash(.success, delay: 0)
+            num = num + 1
+        }
+       
+        
     }
     
 
