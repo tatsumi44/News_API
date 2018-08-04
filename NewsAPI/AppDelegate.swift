@@ -7,40 +7,64 @@
 //
 
 import UIKit
-
+import Alamofire
+import SwiftyJSON
+import SwiftDate
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     var window: UIWindow?
-
-
+    var json:JSON!
+    var flag = false
+    var contentsArray = [Contents]()
+    var contentsArraies = [String:[Contents]]()
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        for i in 0..<7{
+            getAPI(days: i)
+        }
         return true
     }
-
+    func getAPI(days:Int) {
+        var date = Date()
+        date = date - days.day
+        print(date.string(custom: "yyyyMMdd"))
+        Alamofire.request("https://intense-wave-30042.herokuapp.com/news", method: .get, parameters: ["date":date.string(custom: "yyyyMMdd")], encoding: URLEncoding.default, headers: nil).responseJSON { (response:DataResponse<Any>) in
+            guard let objectStr = response.result.value else { return }
+            let object = (objectStr as AnyObject).data(using: String.Encoding.utf8.rawValue)
+            self.json = JSON(object as Any)
+            print(self.json)
+            self.contentsArray = [Contents]()
+            for i in 0..<self.json.count{
+                self.contentsArray.append(Contents(url: self.json[i]["url"].url!, name: self.json[i]["name"].string!, date: self.json[i]["date"].string!))
+            }
+            self.contentsArraies["\(date.string(custom: "yyyyMMdd"))"] = self.contentsArray
+            print(self.contentsArraies)
+        }
+    }
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
     }
-
+    
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
-
+    
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
     }
-
+    
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
-
+    
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
+    
+    
 }
 

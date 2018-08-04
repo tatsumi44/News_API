@@ -42,9 +42,5 @@ class WebViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
             HUD.flash(.success, delay: 0)
             num = num + 1
         }
-       
-        
     }
-    
-
 }

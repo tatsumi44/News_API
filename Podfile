@@ -7,6 +7,7 @@ target 'NewsAPI' do
   pod 'Alamofire'
   pod 'SwiftyJSON'
   pod 'PKHUD', '~> 5.0'
+  pod 'SwiftDate'
   # Pods for NewsAPI
 
 end
